@@ -1,0 +1,66 @@
+<html>
+<head>
+	<title>Weekly World News Digested Jan 6 1981 to Aug 20 2007</title>
+	<LINK href="css/demo_table.css" rel="stylesheet" type="text/css">
+	<LINK href="css/smoothness/jquery-ui-1.8.14.custom.css" rel="stylesheet" type="text/css">
+	<script type="text/javascript" src="js/jquery-1.6.2.min.js"></script>
+	<script type="text/javascript" src="js/jquery-ui-1.8.14.custom.min.js"></script>
+	<script type="text/javascript" src="js/jquery.dataTables.min.js"></script>
+	<script>
+	datum = [];
+	$(document).ready(function() {
+		$('.dataset').val('ajax/wwn_norm.json')
+		$('.dataset').change(function() {
+			$('#example').hide()
+			$('#loadingdone').hide()
+			$('#loading').show()
+			$.getJSON($(this).val(), function(data) {
+				var datum = [];
+				$.each(data, function(key, val) {
+					datum.push([val.n, val.t, val.y[0], val.y[1], val.y[2], val.y[3], val.y[4], val.y[5]])
+				});
+				$('#example').dataTable( {
+					"iDisplayLength": 100,
+					"bJQueryUI": true,
+					"bDestroy": true,
+					"aaData": datum,
+					"aoColumns": [
+						{ "sTitle": "String" },
+						{ "sTitle": "Total" },
+						{ "sTitle": "1980" },
+						{ "sTitle": "1985" },
+						{ "sTitle": "1990" },
+						{ "sTitle": "1995" },
+						{ "sTitle": "2000" },
+						{ "sTitle": "2005" }]
+				});
+				$('#loading').hide()
+				$('#loadingdone').show()
+				$('#example').show('slow', function() {
+    				$('#loadingdone').hide()
+  		        });
+			});
+		});	
+		$('.dataset').change();
+	});
+	</script>          
+</head>
+<body>
+	<div> 
+		<div style="display:inline-block"><span style="font-size: 30px">Weekly World News Digested!</span> <span style="font-size: small">Jan 6 1981 to Aug 20 2007</span></div>
+		<div style="display:inline-block">
+			<form action="">
+			<select class="dataset">
+			<option value="ajax/wwn_flat.json">Flat Dataset</option>
+			<option value="ajax/wwn_norm.json">Normalized Dataset</option>
+			<option value="ajax/wwn_norm_improper.json">Normalized Dataset No Proper Nouns</option>
+			<option value="ajax/wwn_norm_single.json">Normalized Dataset Only Single Words</option>
+			</select>
+			</form>
+		</div>
+		<div id="loading" style="display: inline-block;">loading!</div>
+		<div id="loadingdone" style="display: inline-block;"><img src="images/check.png" width="10px" height="10px"></div>
+	</div>
+	<table cellpadding="0" cellspacing="0" border="0" class="display" id="example"></table>
+</body>
+</html>

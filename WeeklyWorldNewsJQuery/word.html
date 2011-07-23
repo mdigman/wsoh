@@ -1,0 +1,50 @@
+<html>
+<head>
+	<title>Weekly World News Digested Jan 6 1981 to Aug 20 2007</title>
+	<LINK href="css/demo_table.css" rel="stylesheet" type="text/css">
+	<LINK href="css/smoothness/jquery-ui-1.8.14.custom.css" rel="stylesheet" type="text/css">
+	<script type="text/javascript" src="js/jquery-1.6.2.min.js"></script>
+	<script type="text/javascript" src="js/jquery-ui-1.8.14.custom.min.js"></script>
+	<script type="text/javascript" src="js/jquery.dataTables.min.js"></script>
+	<script>
+	var datum_single = [];
+	var datum = [];
+	
+	function displayEverything(strIn){
+		alert(strIn);
+		var pushToScreen = [];
+		for (var i=0; i<datum_single.length; i++){
+			if(datum_single[i].search(strIn) != -1)
+				pushToScreen.push(datum_single[i]);
+		}
+		$("explosion").html(pushToScreen.join());
+		
+	}
+	
+	$(document).ready(function() {
+		$('#input').change(function() {
+				displayEverything($(this).val());
+		});
+		
+		$.getJSON('/ajax/wwn_norm_single.json', function(data) {
+			$("#explosion").html("done!");
+			$.each(data, function(key, val) {
+				datum_single.push(val.n);
+			});
+		});
+	});
+	</script>          
+</head>
+<body>
+	<div> 
+		<div style="display:inline-block"><span style="font-size: 30px">Weekly World News Digested!</span> <span style="font-size: small">Jan 6 1981 to Aug 20 2007</span></div>
+		<div style="height: 30px; width: 10px:"></div>
+		<div> 
+			<form action="">
+			<input id="input" type="text" name="query"/> <span style="font-size: 20px">Search for a single word! </span>
+			</form>
+		</div>
+	</div>
+	<div id="explosion">loading!</div>
+</body>
+</html>

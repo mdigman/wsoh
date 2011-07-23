@@ -1,0 +1,90 @@
+<html>
+<head>
+	<title>Weekly World News Digested Jan 6 1981 to Aug 20 2007</title>
+	<LINK href="css/smoothness/jquery-ui-1.8.14.custom.css" rel="stylesheet" type="text/css">
+	<script type="text/javascript" src="js/jquery-1.6.2.min.js"></script>
+	<script type="text/javascript" src="js/jquery-ui-1.8.14.custom.min.js"></script>
+	<script type="text/javascript" src="js/jquery.dataTables.min.js"></script>
+	<script>
+	var datum=[];
+	var numum=[];
+	var wordNum = 0;
+	
+	function magicNumber(successfulSearches){
+		var magic = 0;
+		for(var i=0; i<successfulSearches.length; i++){
+			magic = magic + successfulSearches[i][1];
+		}
+		magic = magic / wordNum / 3741 * 100;
+	
+		return magic;
+	}
+	
+	function strcmp ( str1, str2 ) {
+    	return ( ( str1 == str2 ) ? 0 : ( ( str1 > str2 ) ? 1 : -1 ) );
+	}
+
+	
+	function process(textIn){
+		textMass = textIn.split(' ');
+		wordNum = textMass.length;
+		succesfulSearches = [];
+		var treeToScreen = "";
+		for (var i=0; i<textMass.length; i++){
+			var temp = searchArray(textMass[i].replace(/[^\w\s]|_/g, ""));
+			treeToScreen = treeToScreen + 'WORD: '+ textMass[i] + '<br />';
+			for (var j=0; j<temp.length; j++){
+				succesfulSearches.push([datum[temp[j]], numum[temp[j]]]);
+				treeToScreen = treeToScreen + '>> ' + datum[temp[j]] + ' : '+numum[temp[j]]+'<br />';
+			}
+			
+		}
+		$('#tree').hide();
+		$('#tree').html(treeToScreen);
+		$('#tree').show('slow');
+		return succesfulSearches;
+	}
+	function searchArray(textIn){
+		var matchingStrings = [];
+		for (var i=0; i<datum.length; i++){
+			var temp = datum[i].split(' ');
+			for (var j=0; j<temp.length;j++){
+				if(strcmp(temp[j], textIn)==0)
+					matchingStrings.push(i);
+			}
+				
+		}
+		return matchingStrings;
+	}
+	$(document).ready(function() {
+		$('magicnum').hide();
+		$.getJSON('ajax/wwn_norm.json', function(data) {
+			datum = [];
+			numum = [];
+			$.each(data, function(key, val) {
+				datum.push(val.n);
+				numum.push(val.t);
+			});
+			$('#loading').hide();
+			$('#runit').click(function() {
+				$('#magicnum').html(magicNumber(process( $('#textit').val() )).toPrecision(3)+'%');
+			});
+		});
+	});
+	</script>          
+</head>
+<body>
+	<div><span style="font-size: 30px">Weekly World News Digested!</span> <span style="font-size: small">Jan 6 1981 to Aug 20 2007</span></div>
+	<br />
+	<div style="width:100%">
+		<form class="runit" action="">
+			<textarea id="textit" name="text" style="width: 100%; height: 200px; box-shadow: 0px 0px 5px #888;"></textarea><br />
+			<input id="runit" type="button" value="Skeptanalize" />
+		</form>
+	</div>
+	<div id="magicnum" style="font-size: 90px;"></div>
+	<div id="loading" style="display:block;">loading!</div>
+	<div id="tree" style="display: block;"></div>
+</form>
+</body>
+</html>
